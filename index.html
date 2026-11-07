@@ -82,30 +82,43 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 #gView img,#gView video{max-width:100%;max-height:72%;border-radius:10px}
 #gView .grow{display:flex;gap:10px}
 #gView a{text-decoration:none;color:#fff}
+#top{position:absolute;left:0;right:0;top:0;height:150px;padding:0;display:block;background:linear-gradient(to bottom,rgba(4,10,24,.7),transparent);pointer-events:none}
+#tiltInfo{top:calc(env(safe-area-inset-top) + 14px)}
+#top2{top:calc(env(safe-area-inset-top) + 58px);gap:9px;padding:2px 12px}
+.tool{position:relative;flex:0 0 auto;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--bg);border:1px solid var(--line);color:#e8eefc;padding:0;transition:background .2s,box-shadow .2s,transform .15s}
+.tool:active{transform:scale(.92)}
+.tool svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.tool.on{background:linear-gradient(180deg,#5b9bff,#2563eb);border-color:rgba(147,197,253,.65);color:#fff;box-shadow:0 4px 14px var(--glow)}
+.tool i{position:absolute;right:-2px;bottom:-2px;font:700 10px system-ui;font-style:normal;background:#fff;color:#1d4ed8;border-radius:8px;padding:0 4px;line-height:14px}
+.tool i:empty{display:none}
+#toast{top:calc(env(safe-area-inset-top) + 112px);bottom:auto}
+#manualBox{bottom:calc(env(safe-area-inset-bottom) + 365px)}
+#bottom{gap:7px;padding-top:46px}
+.row{height:36px;padding:0 14px;border-radius:14px}
+#modes{display:flex;justify-content:center;align-items:center;gap:6px;height:30px}
+.mode{background:none;padding:4px 12px;font-weight:700;font-size:13px;color:rgba(255,255,255,.55);border-radius:0;pointer-events:auto;transition:color .2s}
+.mode.on{color:#fff;box-shadow:inset 0 -2px 0 var(--a)}
+#shutterRow{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 12px}
+#thumb{justify-self:start}
+#bSwitch{justify-self:end;width:54px;height:54px}
+#bSwitch svg{width:24px;height:24px}
+#shutter{width:76px;height:76px}
+#shutter.vid{background:#ef4444}
+body.recording #shutter{border-radius:26px}
+#recBtn{display:none;height:30px;border-radius:15px;padding:0 16px;background:#ef4444;font-size:13px;font-weight:700;pointer-events:auto;animation:pulse 1s infinite}
+body.recording #recBtn{display:block}
+body.recording .mode{display:none}
 </style>
 </head>
 <body>
-<canvas id="bgCanvas" width="48" height="104"></canvas>
 <div id="stage"><video id="video" autoplay playsinline muted></video></div>
 <div id="grid"></div>
 <div id="hit"></div>
 
 <div id="ui">
-  <div id="top">
-    <button class="pill on" id="bStab">🧭 Stabilizer: ON</button>
-    <button class="pill" id="bLock">🔓 Kunci Rotasi</button>
-  </div>
+  <div id="top"></div>
   <div id="tiltInfo">Lurus ✓</div>
-  <div id="top2">
-    <button class="pill on" id="bShake">📳 Anti-getar: ON</button>
-    <button class="pill" id="bFlash">⚡ Flash: OFF</button>
-    <button class="pill" id="bTimer">⏱ Timer: OFF</button>
-    <button class="pill" id="bBurst">📸 Burst: OFF</button>
-    <button class="pill" id="bGrid">▦ Grid: OFF</button>
-    <button class="pill" id="bSharp">🔍 Tajam: ON</button>
-    <button class="pill" id="bDate">🕒 Tanggal: OFF</button>
-    <button class="pill" id="bSwitch">🔄 Kamera</button>
-  </div>
+  <div id="top2"><button class="tool on" id="bStab" aria-label="Stabilizer"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/></svg></button><button class="tool" id="bLock" aria-label="Kunci rotasi"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button><button class="tool on" id="bShake" aria-label="Anti-getar"><svg viewBox="0 0 24 24"><rect x="8" y="4" width="8" height="16" rx="2"/><path d="M4 9v6M20 9v6M1.5 11v2M22.5 11v2"/></svg></button><button class="tool" id="bFlash" aria-label="Flash"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></button><button class="tool" id="bTimer" aria-label="Timer"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/></svg><i id=tmv></i></button><button class="tool" id="bBurst" aria-label="Burst"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="14" height="12" rx="2"/><path d="M7 3h12a2 2 0 0 1 2 2v10"/></svg></button><button class="tool" id="bGrid" aria-label="Grid"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg></button><button class="tool on" id="bSharp" aria-label="Tajam"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 17v4M17 19h4"/></svg></button><button class="tool" id="bDate" aria-label="Tanggal"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></button></div>
 
   <div id="level"><div id="bubble"></div></div>
   <div id="count"></div>
@@ -120,17 +133,18 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
     <div class="scroll" id="zPre"></div>
     <div class="row">
       <span class="lb" id="zoomVal">1.0×</span>
-      <input type="range" id="zoom" min="0" max="1000" step="1" value="131">
+      <input type="range" id="zoom" min="0" max="1000" step="1" value="100">
     </div>
     <div class="row">
       <span class="lb">☀ <span id="brVal">100</span>%</span>
       <input type="range" id="bright" min="50" max="150" step="1" value="100">
     </div>
     <div class="scroll" id="filters"></div>
+    <div id="modes"><button class="mode on" id="mPhoto">Foto</button><button class="mode" id="mVideo">Video</button><button id="recBtn" aria-label="Berhenti">⏺ 00:00</button></div>
     <div id="shutterRow">
       <button id="thumb" aria-label="Galeri"></button>
-      <button id="shutter" aria-label="Ambil foto"></button>
-      <button id="recBtn" aria-label="Rekam video">🎥 Video</button>
+      <button id="shutter" aria-label="Ambil"></button>
+      <button class="tool" id="bSwitch" aria-label="Ganti kamera"><svg viewBox="0 0 24 24"><path d="M20 7H8a4 4 0 0 0-4 4v1M4 17h12a4 4 0 0 0 4-4v-1"/><path d="M17 4l3 3-3 3M7 20l-3-3 3-3"/></svg></button>
     </div>
   </div>
 </div>
@@ -159,9 +173,9 @@ const $=s=>document.querySelector(s);
 const D2R=Math.PI/180;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
-const ZMAX=100,ZMIN=0.5;
+const ZMAX=100,ZMIN=0.6;
 
-const stage=$('#stage'),video=$('#video'),bgCanvas=$('#bgCanvas');
+const stage=$('#stage'),video=$('#video');
 const FILTERS=[
   {n:'Normal',f:'none'},
   {n:'Hitam Putih',f:'grayscale(1)'},
@@ -180,7 +194,7 @@ const S={
   tilt:0, tiltA:0, tiltS:0, motion:false, shake:true, hg:0, hb:0, tx:0, ty:0, mgv:1,           // kemiringan HP (derajat, + = ke kanan)
   sx:0, sxS:0, uz:0, uzS:0,
   cur:0,
-  facing:'environment', stream:null, track:null,
+  mode:'photo', facing:'environment', stream:null, track:null,
   hasTorch:false, hw:false, hwMin:1, hwMax:1, zoom:1, dz:1, dzCur:1,
   filter:0, bright:1, flash:false, timer:0, burst:false,
   grid:false, sharp:true, date:false,
@@ -236,7 +250,6 @@ function applyHwZoom(z){
 }
 function setZoom(v){
   v=clamp(v,ZMIN,ZMAX);S.zoom=v;
-  if(v<1&&!warned05&&!(S.hw&&S.hwMin<1)){warned05=true;toast('0.5×: menampilkan seluruh frame sensor (sudut pandang maksimum kamera ini)')}
   $('#zoom').value=sliderFromZ(v);
   $('#zoomVal').textContent=(v<10?v.toFixed(1):Math.round(v))+'×';
   [...$('#zPre').children].forEach(c=>c.classList.toggle('on',Math.abs(+c.dataset.z-v)<0.06*+c.dataset.z));
@@ -245,7 +258,7 @@ function setZoom(v){
   S.dz=v/hwPart;                    // sisa zoom dikerjakan digital
 }
 $('#zoom').oninput=e=>setZoom(zFromSlider(+e.target.value));
-[0.5,1,2,5,10,25,50,100].forEach(z=>{
+[0.6,1,2,5,10,25,50,100].forEach(z=>{
   const c=document.createElement('button');
   c.className='chip';c.dataset.z=z;c.textContent=z+'×';
   c.onclick=()=>setZoom(z);
@@ -315,11 +328,11 @@ function coverScale(th,W,H){
 /* zoom 0.5-1×: dari 'cover' (1×) pelan-pelan ke 'contain' = seluruh frame sensor terlihat (sudut pandang maksimum) */
 function wideRC(){const vw=video.videoWidth||1,vh=video.videoHeight||1,W=innerWidth,H=innerHeight;
   return Math.min(W/vw,H/vh)/Math.max(W/vw,H/vh)}
-const wideG=f=>(Math.max(f,.5)-.5)/.5;
+const wideG=f=>(Math.max(f,.6)-.6)/.4;
 const angDiff=(t,c)=>((t-c+540)%360+360)%360-180;
 
 /* ---------- loop animasi ---------- */
-let last=performance.now(),lastTxt='',isWide=false,lastTr='',lastSh='',lastBg=0;
+let last=performance.now(),lastTxt='',isWide=false,lastTr='';
 const level=$('#level'),bubble=$('#bubble'),info=$('#tiltInfo');
 function loop(t){
   const dt=Math.min(.1,(t-last)/1000);last=t;
@@ -349,12 +362,9 @@ function loop(t){
   S.tx=tx;S.ty=ty;
   if(wide!==isWide){isWide=wide;video.style.objectFit=wide?'contain':'cover'}
   const cs=coverScale(S.cur*D2R,innerWidth,innerHeight);
-  const sc=cs*(wide?Math.pow(1/wideRC(),wideG(f)):f*S.mgv);
+  const sc=(wide?1+(cs-1)*wideG(f):cs)*(wide?Math.pow(1/wideRC(),wideG(f)):f*S.mgv);
   const tr=`translate(${tx.toFixed(1)}px,${ty.toFixed(1)}px) rotate(${S.cur.toFixed(2)}deg) scale(${sc.toFixed(3)})`;
   if(tr!==lastTr){stage.style.transform=tr;lastTr=tr}
-  const sh=clamp((1-f)*12,0,1).toFixed(2);
-  if(sh!==lastSh){bgCanvas.style.opacity=sh;lastSh=sh}
-  if(wide&&t-lastBg>110){lastBg=t;tinyBg(innerWidth,innerHeight)}   // latar blur: canvas 48px, ~9 fps
 
   const R=26;
   bubble.style.transform=`translate(${(clamp(S.sxS/.5,-1,1)*R).toFixed(1)}px,${(clamp(S.uzS/.5,-1,1)*R).toFixed(1)}px)`;
@@ -380,48 +390,38 @@ requestAnimationFrame(loop);
 
 /* ---------- tombol ---------- */
 function uiUpdate(){
-  const b=$('#bStab');
-  b.classList.toggle('on',S.stab);
-  b.textContent=S.stab?'🧭 Stabilizer: ON':'🧭 Stabilizer: OFF';
-  $('#bLock').classList.toggle('on',S.lock);
-  $('#bLock').textContent=S.lock?'🔒 Terkunci':'🔓 Kunci Rotasi';
+  const T=(id,on)=>$(id).classList.toggle('on',!!on);
+  T('#bStab',S.stab);T('#bLock',S.lock);T('#bShake',S.shake);T('#bFlash',S.flash);T('#bTimer',S.timer>0);
+  T('#bBurst',S.burst);T('#bGrid',S.grid);T('#bSharp',S.sharp);T('#bDate',S.date);
+  $('#tmv').textContent=S.timer?S.timer+'s':'';
   $('#manualBox').classList.toggle('show',S.gyro===false&&!S.lock);
-  $('#bShake').classList.toggle('on',S.shake);
-  $('#bShake').textContent=S.shake?'📳 Anti-getar: ON':'📳 Anti-getar: OFF';
-  $('#bFlash').classList.toggle('on',S.flash);
-  $('#bFlash').textContent=S.flash?'⚡ Flash: ON':'⚡ Flash: OFF';
-  $('#bTimer').classList.toggle('on',S.timer>0);
-  $('#bTimer').textContent=S.timer?`⏱ Timer: ${S.timer}s`:'⏱ Timer: OFF';
-  $('#bBurst').classList.toggle('on',S.burst);
-  $('#bBurst').textContent=S.burst?'📸 Burst: ON':'📸 Burst: OFF';
-  $('#bGrid').classList.toggle('on',S.grid);
-  $('#bGrid').textContent=S.grid?'▦ Grid: ON':'▦ Grid: OFF';
   $('#grid').classList.toggle('show',S.grid);
-  $('#bSharp').classList.toggle('on',S.sharp);
-  $('#bSharp').textContent=S.sharp?'🔍 Tajam: ON':'🔍 Tajam: OFF';
-  $('#bDate').classList.toggle('on',S.date);
-  $('#bDate').textContent=S.date?'🕒 Tanggal: ON':'🕒 Tanggal: OFF';
+  T('#mPhoto',S.mode==='photo');T('#mVideo',S.mode==='video');
+  $('#shutter').classList.toggle('vid',S.mode==='video');
 }
-$('#bStab').onclick=()=>{S.stab=!S.stab;if(!S.stab)S.lock=false;startSensors();uiUpdate()};
+const oo=v=>v?'ON':'OFF';
+$('#bStab').onclick=()=>{S.stab=!S.stab;if(!S.stab)S.lock=false;startSensors();uiUpdate();toast('Stabilizer: '+oo(S.stab))};
 $('#bLock').onclick=()=>{
   if(!S.stab&&!S.lock){toast('Nyalakan Stabilizer dulu');return}
   S.lock=!S.lock;
   if(S.lock)S.lockedAngle=S.cur;
-  uiUpdate();
+  uiUpdate();toast('Kunci rotasi: '+oo(S.lock));
 };
 $('#manualRange').oninput=e=>{S.manualDeg=+e.target.value;$('#manualVal').textContent=Math.round(S.manualDeg)+'°'};
-$('#bShake').onclick=()=>{S.shake=!S.shake;S.hg=S.hb=0;uiUpdate()};
-$('#bFlash').onclick=()=>{S.flash=!S.flash;uiUpdate()};
-$('#bTimer').onclick=()=>{S.timer=S.timer===0?3:S.timer===3?10:0;uiUpdate()};
-$('#bBurst').onclick=()=>{S.burst=!S.burst;uiUpdate()};
-$('#bGrid').onclick=()=>{S.grid=!S.grid;uiUpdate()};
-$('#bSharp').onclick=()=>{S.sharp=!S.sharp;uiUpdate()};
-$('#bDate').onclick=()=>{S.date=!S.date;uiUpdate()};
+$('#bShake').onclick=()=>{S.shake=!S.shake;S.hg=S.hb=0;uiUpdate();toast('Anti-getar: '+oo(S.shake))};
+$('#bFlash').onclick=()=>{S.flash=!S.flash;uiUpdate();toast('Flash: '+oo(S.flash))};
+$('#bTimer').onclick=()=>{S.timer=S.timer===0?3:S.timer===3?10:0;uiUpdate();toast('Timer: '+(S.timer?S.timer+' detik':'OFF'))};
+$('#bBurst').onclick=()=>{S.burst=!S.burst;uiUpdate();toast('Burst: '+oo(S.burst))};
+$('#bGrid').onclick=()=>{S.grid=!S.grid;uiUpdate();toast('Grid: '+oo(S.grid))};
+$('#bSharp').onclick=()=>{S.sharp=!S.sharp;uiUpdate();toast('Tajamkan foto: '+oo(S.sharp))};
+$('#bDate').onclick=()=>{S.date=!S.date;uiUpdate();toast('Cap tanggal: '+oo(S.date))};
 $('#bSwitch').onclick=async()=>{
   if(rec)await stopRec();
   S.facing=S.facing==='user'?'environment':'user';
   await startCam();
 };
+$('#mPhoto').onclick=()=>{if(!rec){S.mode='photo';uiUpdate()}};
+$('#mVideo').onclick=()=>{if(!rec){S.mode='video';uiUpdate()}};
 $('#bright').oninput=e=>{S.bright=+e.target.value/100;$('#brVal').textContent=e.target.value;applyFilter()};
 
 const fbox=$('#filters');
@@ -465,26 +465,11 @@ function frameSize(){
   const cv=Math.max(W/vw,H/vh);
   return{vw,vh,W,H,outW:Math.round(W/cv),outH:Math.round(H/cv)};
 }
-const bgc=bgCanvas,bgx=bgc.getContext('2d');
-function tinyBg(W,H){
-  const vw=video.videoWidth,vh=video.videoHeight;if(!vw)return;
-  const w=48,h=Math.max(8,Math.round(48*H/W));
-  if(bgc.height!==h)bgc.height=h;
-  const k=Math.max(w/vw,h/vh);
-  bgx.save();bgx.translate(w/2,h/2);if(S.facing==='user')bgx.scale(-1,1);bgx.scale(k,k);
-  bgx.drawImage(video,-vw/2,-vh/2,vw,vh);bgx.restore();
-  bgx.fillStyle='rgba(0,0,0,.4)';bgx.fillRect(0,0,w,h);
-}
 function drawTo(x,outW,outH){
   const vw=video.videoWidth,vh=video.videoHeight,f=S.dzCur,wide=f<1;
   const cs=coverScale(S.cur*D2R,innerWidth,innerHeight);
-  const sc=cs*(wide?Math.pow(wideRC(),1-wideG(f)):f*S.mgv);
+  const sc=(wide?1+(cs-1)*wideG(f):cs)*(wide?Math.pow(wideRC(),1-wideG(f)):f*S.mgv);
   x.fillStyle='#000';x.fillRect(0,0,outW,outH);
-  if(wide){
-    tinyBg(innerWidth,innerHeight);
-    x.save();x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';
-    x.drawImage(bgc,0,0,bgc.width,bgc.height,0,0,outW,outH);x.restore();
-  }
   x.save();
   const rt=outW/innerWidth;
   x.translate(outW/2+S.tx*rt,outH/2+S.ty*rt);
@@ -567,7 +552,7 @@ async function trigger(){
     S.busy=false;S.counting=false;$('#shutter').classList.remove('busy');
   }
 }
-$('#shutter').onclick=trigger;
+$('#shutter').onclick=()=>{if(S.mode==='video'){rec?stopRec():startRec()}else trigger()};
 
 /* ---------- rekam VIDEO yang juga distabilkan ---------- */
 let rec=null,recStarting=false;
@@ -603,7 +588,7 @@ async function startRec(){
   if(S.flash&&S.facing==='environment'&&S.hasTorch)rec.torch=await setTorch(true);
   mr.start(500);
   recStarting=false;
-  $('#recBtn').classList.add('rec');
+  document.body.classList.add('recording');
   requestAnimationFrame(recTick);
 }
 function recTick(){
@@ -625,7 +610,7 @@ async function stopRec(){
   await new Promise(res=>{const old=r.mr.onstop;r.mr.onstop=()=>{old();res()};try{r.mr.stop()}catch(e){res()}});
   if(r.audio)r.audio.getTracks().forEach(t=>t.stop());
   if(r.torch)await setTorch(false);
-  $('#recBtn').classList.remove('rec');$('#recBtn').textContent='🎥 Video';
+  document.body.classList.remove('recording');$('#recBtn').textContent='⏺ 00:00';
 }
 $('#recBtn').onclick=()=>{rec?stopRec():startRec()};
 
